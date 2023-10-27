@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "WeatherForecast";
+package WeatherForecast;
+
+service WeatherForecasts {
+  rpc GetUpdateStream (DownloadRequest) returns (stream Update);
+}
+
+message DownloadRequest {
+  string url = 1;
+}
+
+message Update {
+  int32 progressInt = 1;
+}

@@ -13,4 +13,28 @@
         <PackageReference Include="MudBlazor" Version="6.11.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="SeedlyServer\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="SeedlyServer\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="SeedlyServer\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="SeedlyServer\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="SeedlyServer\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="SeedlyServer\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="SeedlyServer\obj\SeedlyServer.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="SeedlyServer\bin\Debug\net6.0\SeedlyServer.deps.json" />
+      <_ContentIncludedByDefault Remove="SeedlyServer\bin\Debug\net6.0\SeedlyServer.runtimeconfig.json" />
+    </ItemGroup>
+
 </Project>
