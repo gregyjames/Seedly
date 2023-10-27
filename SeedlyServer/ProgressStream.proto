@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/empty.proto";
-
 option csharp_namespace = "WeatherForecast";
 package WeatherForecast;
 
@@ -11,6 +9,7 @@ service WeatherForecasts {
 
 message DownloadRequest {
   string url = 1;
+  string outfile = 2;
 }
 
 message Update {

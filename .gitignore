@@ -1,2 +1,7 @@
 
 .idea/
+/bin/Debug/net6.0
+/obj
+/SeedlyServer/bin/Debug/net6.0
+/SeedlyServer/obj
+/.vs

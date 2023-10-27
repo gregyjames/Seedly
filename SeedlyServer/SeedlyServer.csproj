@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -35,7 +35,10 @@
 
     <ItemGroup>
       <None Remove="ProgressStream.proto" />
-      <Protobuf Include="ProgressStream.proto" GrpcServices="Server" Link="ProgressStream.proto" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\LibSeedy\LibSeedy.csproj" />
     </ItemGroup>
 
 </Project>
