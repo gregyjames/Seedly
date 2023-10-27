@@ -1,0 +1,134 @@
+﻿@using Microsoft.Win32.SafeHandles
+@inherits LayoutComponentBase
+
+<div class="page">
+    
+<MudThemeProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudText Typo="Typo.h5" Class="ml-3">Seedly</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+    </MudAppBar>
+    <MudMainContent>
+        <MudGrid Spacing="3" Justify="Justify.FlexStart">
+            <MudItem xs="12">
+                <MudTextField  @bind-Value="Search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" 
+                               OnKeyDown="@Callback"/>
+            </MudItem>
+            <MudItem xs="12">
+                <h3>Completed Items</h3>
+                <MudList>
+                    @foreach (var item in CompletedItems.Take(5))
+                    {
+                        if (item.status == Status.Success)
+                        {
+                            <MudListItem Avatar="@Icons.Material.Filled.Check">
+                                @item.magnet_url
+                            </MudListItem>
+                        }
+                        else if (item.status == Status.Fail)
+                        {
+                            <MudListItem Avatar="@Icons.Material.Filled.Cancel">
+                                @item.magnet_url
+                            </MudListItem>
+                        }
+                    }
+                </MudList>
+            </MudItem>
+            <MudItem xs="12">
+                <h3>
+                    Current Items:
+                </h3>
+                <MudStack>
+                    @foreach (var item in items)
+                    {
+                        <MudItem>
+                            <MudStack Row="true">
+                                <MudItem>@item.magnet_url</MudItem>
+                                <MudProgressLinear Color="Color.Success" Striped="true" Size="Size.Large" Value="@item.progress_value" Min="0" Max="100">
+                                    <MudText Typo="Typo.subtitle1" Color="Color.Dark">
+                                        <b>@item.progress_value.ToString()%</b>
+                                    </MudText>
+                                </MudProgressLinear>
+                            </MudStack>
+                        </MudItem>
+                    }
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    public string Search { get; set;}
+    public List<DownloadItem> items = new List<DownloadItem>();
+    public HttpClient Client = new HttpClient();
+    public List<DownloadItem> CompletedItems = new List<DownloadItem>();
+
+    public enum Status
+    {
+        Downloading,
+        Success,
+        Fail
+    }
+    public class DownloadItem
+    {
+        public string magnet_url { get; set; }
+        public int progress_value { get; set; }
+        public bool _disposed;
+        public void Dispose() => _disposed = true;
+        public Status status { get; set; }
+        public DownloadItem(string url, Status stat)
+        {
+            magnet_url = url;
+            progress_value = 0;
+            status = stat;
+        }
+    }
+    private async void Callback(KeyboardEventArgs obj)
+    {
+        if ((obj.Key == "Enter" || obj.Key == "NumpadEnter") && /*!items.Any(x => x.magnet_url.Equals(Search)) &&*/ !string.IsNullOrEmpty(Search))
+        {
+            items.Add(new DownloadItem(Search, Status.Downloading));
+            StateHasChanged();
+            await SimulateProgress();
+        }
+    }
+    
+    public async Task SimulateProgress()
+    {
+        var item = items.Last();
+        item.progress_value = 0;
+
+        var message = await Client.SendAsync(new HttpRequestMessage(HttpMethod.Get, item.magnet_url), HttpCompletionOption.ResponseHeadersRead);
+        var response = await message.Content.ReadAsByteArrayAsync();
+    
+        int batchSize = 10;
+
+        byte[][] parts = response
+            .Select((value, index) => new { value, index })
+            .GroupBy(x => x.index / batchSize)
+            .Select(g => g.Select(x => x.value).ToArray())
+            .ToArray();
+        
+        int totalBytes = response.Length;
+        int bytesDownloaded = 0;
+        
+        for (int i = 0; i < parts.Length; i += 1)
+        {
+            bytesDownloaded += parts[i].Length;
+            item.progress_value = (int)((double)bytesDownloaded / totalBytes * 100);
+            StateHasChanged();
+            await Task.Delay(1);
+        }
+        item.status = Status.Success;
+        CompletedItems.Add(item);
+        items.Remove(item);
+        StateHasChanged();
+        await Task.Delay(1);
+    }
+
+}
+</div>
