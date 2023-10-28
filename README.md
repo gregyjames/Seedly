@@ -42,4 +42,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ### Contributions
-All contributions via pull request are greatly encouraged and welcome. Any additional features or questions can be opened via the issues page.
+This project is still in its infancy and there are many features to be added and bugs to be resolved. All contributions via pull request are greatly encouraged and welcome. Any additional features or questions can be opened via the issues page.
