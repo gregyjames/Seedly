@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Seedly", "Seedly.csproj", "{D1E445B1-2816-44C1-B34F-BA4BB6512B8B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibSeedy", "..\LibSeedy\LibSeedy.csproj", "{C12DAA8B-0F5A-42F4-80D0-972014750287}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeedlyServerApp", "..\SeedlyServerApp\SeedlyServerApp.csproj", "{76085547-113D-4C24-8CF7-06D6AD8675B0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeedlyServer", "SeedlyServer\SeedlyServer.csproj", "{7864D633-EE55-4C7E-9134-440D3B45DC30}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibSeedy", "LibSeedy\LibSeedy.csproj", "{AC6E0E7B-17C3-44B1-89DA-EADE3FE89E62}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeedlyServerApp", "SeedlyServerApp\SeedlyServerApp.csproj", "{FD20FE9E-D1E8-4E34-B1E0-9F3080E620F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,22 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D1E445B1-2816-44C1-B34F-BA4BB6512B8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1E445B1-2816-44C1-B34F-BA4BB6512B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1E445B1-2816-44C1-B34F-BA4BB6512B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1E445B1-2816-44C1-B34F-BA4BB6512B8B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C12DAA8B-0F5A-42F4-80D0-972014750287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C12DAA8B-0F5A-42F4-80D0-972014750287}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C12DAA8B-0F5A-42F4-80D0-972014750287}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C12DAA8B-0F5A-42F4-80D0-972014750287}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76085547-113D-4C24-8CF7-06D6AD8675B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76085547-113D-4C24-8CF7-06D6AD8675B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76085547-113D-4C24-8CF7-06D6AD8675B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76085547-113D-4C24-8CF7-06D6AD8675B0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7864D633-EE55-4C7E-9134-440D3B45DC30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7864D633-EE55-4C7E-9134-440D3B45DC30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7864D633-EE55-4C7E-9134-440D3B45DC30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7864D633-EE55-4C7E-9134-440D3B45DC30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC6E0E7B-17C3-44B1-89DA-EADE3FE89E62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC6E0E7B-17C3-44B1-89DA-EADE3FE89E62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC6E0E7B-17C3-44B1-89DA-EADE3FE89E62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC6E0E7B-17C3-44B1-89DA-EADE3FE89E62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD20FE9E-D1E8-4E34-B1E0-9F3080E620F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD20FE9E-D1E8-4E34-B1E0-9F3080E620F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD20FE9E-D1E8-4E34-B1E0-9F3080E620F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD20FE9E-D1E8-4E34-B1E0-9F3080E620F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

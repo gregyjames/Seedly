@@ -1,7 +1,19 @@
+.vs/
 
-.idea/
-/bin/Debug/net6.0
-/obj
-/SeedlyServer/bin/Debug/net6.0
-/SeedlyServer/obj
-/.vs
+LibSeedy/bin/
+
+SeedlyServer/bin/Debug/net6.0/cache/
+
+SeedlyServer/bin/Debug/net6.0/
+
+SeedlyServer/obj/Debug/net6.0/
+
+SeedlyServer/obj/
+
+SeedlyServerApp/obj/Debug/net7.0/
+
+SeedlyServerApp/bin/Debug/net7.0/
+
+SeedlyServerApp/obj/
+
+LibSeedy/obj/

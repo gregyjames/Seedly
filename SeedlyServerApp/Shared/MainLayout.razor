@@ -10,21 +10,20 @@
 <MudThemeProvider />
 
 <MudLayout>
-    <MudAppBar Elevation="1">
+    <MudAppBar Elevation="1" Color="Color.Success">
         <MudText Typo="Typo.h5" Class="ml-3">Seedly</MudText>
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
     </MudAppBar>
     <MudMainContent>
         <MudGrid Spacing="3" Justify="Justify.FlexStart">
             <MudItem xs="12">
-                <MudTextField  @bind-Value="Search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" 
-                               OnKeyDown="@Callback"/>
+                <MudTextField  @bind-Value="Search" Label="Enter magnet link" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Download" AdornmentColor="Color.Secondary" 
+                               OnAdornmentClick="Callback"/>
             </MudItem>
             <MudItem xs="12">
                 <h3>Completed Items</h3>
                 <MudList>
-                    @foreach (var item in CompletedItems.Take(5))
+                    @foreach (var item in CompletedItems.TakeLast(5).Reverse())
                     {
                         if (item.status == Status.Success)
                         {
@@ -50,7 +49,7 @@
                     {
                         <MudItem>
                             <MudStack Row="true">
-                                <MudItem>@item.magnet_url</MudItem>
+                                <MudItem Style="overflow: hidden">@item.magnet_url</MudItem>
                                 <MudProgressLinear Color="Color.Success" Striped="true" Size="Size.Large" Value="@item.progress_value" Min="0" Max="100">
                                     <MudText Typo="Typo.subtitle1" Color="Color.Dark">
                                         <b>@item.progress_value.ToString()%</b>
@@ -68,9 +67,9 @@
     @code {
         public string Search { get; set;}
         public List<DownloadItem> items = new List<DownloadItem>();
-        public HttpClient Client = new HttpClient();
         public List<DownloadItem> CompletedItems = new List<DownloadItem>();
-
+        public GrpcChannel channel = GrpcChannel.ForAddress("http://localhost:50051");
+        public CancellationTokenSource cts = new CancellationTokenSource((int)TimeSpan.FromDays(1).TotalMilliseconds);
         public enum Status
         {
             Downloading,
@@ -84,6 +83,7 @@
             public bool _disposed;
             public void Dispose() => _disposed = true;
             public Status status { get; set; }
+
             public DownloadItem(string url, Status stat)
             {
                 magnet_url = url;
@@ -91,49 +91,46 @@
                 status = stat;
             }
         }
-        private async void Callback(KeyboardEventArgs obj)
+        private async Task Callback(MouseEventArgs obj)
         {
-            if ((obj.Key == "Enter" || obj.Key == "NumpadEnter") && /*!items.Any(x => x.magnet_url.Equals(Search)) &&*/ !string.IsNullOrEmpty(Search))
-            {
-                items.Add(new DownloadItem(Search, Status.Downloading));
-                StateHasChanged();
-                await SimulateProgress();
-            }
+            items.Add(new DownloadItem(Search, Status.Downloading));
+            Search = string.Empty;
+            StateHasChanged();
+            await SimulateProgress(cts.Token);
         }
 
-        public async Task SimulateProgress()
+        public async Task SimulateProgress(CancellationToken cancellationToken)
         {
-
-            //var channel = new Channel("localhost:50051", ChannelCredentials.Insecure);
-            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2Support", false);
-
-            var httpHandler = new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler());
-            var channel = GrpcChannel.ForAddress("http://localhost:50051", new GrpcChannelOptions
-            {
-                HttpHandler = httpHandler
-            });
-
-            var client = new WeatherForecast.WeatherForecasts.WeatherForecastsClient(channel);
+            await channel.ConnectAsync();
+            var client = new Seedly.Seedly.SeedlyClient(channel);
 
             var item = items.Last();
             item.progress_value = 0;
+            item.status = Status.Downloading;
+
+            Uri uri = new Uri(item.magnet_url);
+            string fileName = System.IO.Path.GetFileName(uri.LocalPath);
 
             // Prepare the request
-            var request = new WeatherForecast.DownloadRequest
+            var request = new Seedly.DownloadRequest
             { 
-                Url = item.magnet_url
+                Url = item.magnet_url,
+                Outfile = fileName
             };
 
             // Create a call to the server streaming method
-            using (var call = client.GetUpdateStream(request))
+            using (var call = client.GetUpdateStream(request, cancellationToken: cancellationToken))
             {
                 try
                 {
-                    await foreach (var response in call.ResponseStream.ReadAllAsync())
+                    await foreach (var response in call.ResponseStream.ReadAllAsync(cancellationToken))
                     {
                         //Console.WriteLine("Received number: " + response.ProgressInt);
                         item.progress_value = response.ProgressInt;
+                        if (!string.IsNullOrEmpty(response.FileName))
+                        {
+                            item.magnet_url = response.FileName;
+                        }
                         StateHasChanged();
                         await Task.Delay(1);
                     }
@@ -144,17 +141,13 @@
                     Console.WriteLine("The server stream was canceled.");
                     item.status = Status.Fail;
                 }
-                finally
-                {
-                    CompletedItems.Add(item);
-                    items.Remove(item);
-                    StateHasChanged();
-                    await Task.Delay(1);
-                }
-            }
 
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
+                CompletedItems.Add(item);
+                items.Remove(item);
+                StateHasChanged();
+                await Task.Delay(1);
+                
+            }
     }
 
 }

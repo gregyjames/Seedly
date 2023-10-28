@@ -1,13 +1,11 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using Grpc.Core;
+﻿using Grpc.Core;
 using LibSeedy;
 
 const int Port = 50051;
 
 Server server = new Server
 {
-    Services = { WeatherForecast.WeatherForecasts.BindService(new DownloadService()) },
+    Services = { Seedly.Seedly.BindService(new DownloadService()) },
     Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
 };
 

@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-option csharp_namespace = "WeatherForecast";
-package WeatherForecast;
+option csharp_namespace = "Seedly";
+package Seedly;
 
-service WeatherForecasts {
+service Seedly {
   rpc GetUpdateStream (DownloadRequest) returns (stream Update);
 }
 
@@ -14,4 +14,5 @@ message DownloadRequest {
 
 message Update {
   int32 progressInt = 1;
+  string fileName = 2;
 }

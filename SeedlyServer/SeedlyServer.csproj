@@ -31,6 +31,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="MonoTorrent" Version="2.0.7" />
     </ItemGroup>
 
     <ItemGroup>
@@ -38,7 +39,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\LibSeedy\LibSeedy.csproj" />
+      <ProjectReference Include="..\LibSeedy\LibSeedy.csproj" />
     </ItemGroup>
 
 </Project>
