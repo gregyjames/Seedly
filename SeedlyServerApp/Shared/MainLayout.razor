@@ -16,13 +16,13 @@
         <MudSpacer />
     </MudAppBar>
     <MudMainContent>
-        <MudGrid Spacing="3" Justify="Justify.FlexStart">
+            <MudGrid Spacing="0" Justify="Justify.FlexStart" Class="pa-4">
             <MudItem xs="12">
-                <MudTextField  @bind-Value="Search" Label="Enter magnet link" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Download" AdornmentColor="Color.Secondary" 
+                <MudTextField  @bind-Value="Search" Label="Enter magnet link" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Download" AdornmentColor="Color.Primary" 
                                OnAdornmentClick="Callback"/>
             </MudItem>
             <MudItem xs="12">
-                <h3>Completed Items</h3>
+                <MudText Typo="Typo.h4">Completed Items</MudText>
                 <MudList>
                     @foreach (var item in CompletedItems.TakeLast(5).Reverse())
                     {
@@ -42,25 +42,49 @@
                 </MudList>
             </MudItem>
             <MudItem xs="12">
-                <h3>
-                    Current Items:
-                </h3>
-                <MudStack>
-                    @foreach (var item in items)
-                    {
-                        <MudItem>
-                            <MudStack Row="true">
-                                <MudItem Style="overflow: hidden">@item.magnet_url</MudItem>
-                                <MudProgressLinear Color="Color.Success" Striped="true" Size="Size.Large" Value="@item.progress_value" Min="0" Max="100">
-                                    <MudText Typo="Typo.subtitle1" Color="Color.Dark">
-                                        <b>@item.progress_value.ToString()%</b>
-                                    </MudText>
-                                </MudProgressLinear>
-                            </MudStack>
-                        </MudItem>
-                    }
-                </MudStack>
+                <MudText Typo="Typo.h4">Current Items</MudText>
             </MudItem>
+            <MudDivider />
+            @foreach (var item in items)
+            {
+                <MudItem xs="4" Style="overflow: hidden">
+                    <MudStack>
+                        <MudItem>
+                                <MudText Typo="Typo.button">@item.magnet_url</MudText>
+                        </MudItem>
+                        <MudItem>
+                            <MudTreeView T="string">
+                                <MudTreeViewItem Value="@("Files")" Style="overflow:hidden">
+                                    @foreach (var file in item.files)
+                                    {
+                                        <MudTreeViewItem Value="@(file)" />
+                                    }
+                                </MudTreeViewItem>
+                            </MudTreeView>
+                        </MudItem>
+                    </MudStack>
+                </MudItem>
+                <MudItem xs="7">
+                    <MudProgressLinear Color="Color.Success" Striped="true" Size="Size.Large" Value="@item.progress_value" Min="0" Max="100">
+                    <MudText Typo="Typo.subtitle1" Color="Color.Dark">
+                        <b>@item.progress_value.ToString()%</b>
+                    </MudText>
+                      
+                    </MudProgressLinear>
+                </MudItem>
+                <MudItem xs="1">
+                    <MudContainer MaxWidth="MaxWidth.Medium">
+                    @if(item.status == Status.Downloading)
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Pause"></MudIcon>
+                    }
+                    else if(item.status == Status.Pause)
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.PlayArrow"></MudIcon>
+                    }
+                    </MudContainer>
+                </MudItem>
+            }
         </MudGrid>
     </MudMainContent>
 </MudLayout>
@@ -75,7 +99,8 @@
         {
             Downloading,
             Success,
-            Fail
+            Fail,
+            Pause
         }
         public class DownloadItem
         {
@@ -84,12 +109,13 @@
             public bool _disposed;
             public void Dispose() => _disposed = true;
             public Status status { get; set; }
-
+            public List<string> files { get; set; }
             public DownloadItem(string url, Status stat)
             {
                 magnet_url = url;
                 progress_value = 0;
                 status = stat;
+                files = new List<string>();
             }
         }
         private async Task Callback(MouseEventArgs obj)
@@ -131,6 +157,10 @@
                         if (!string.IsNullOrEmpty(response.FileName))
                         {
                             item.magnet_url = response.FileName;
+                        }
+                        if (!string.IsNullOrEmpty(response.Items))
+                        {
+                            item.files = response.Items.Split(',').ToList();
                         }
                         StateHasChanged();
                         await Task.Delay(1);

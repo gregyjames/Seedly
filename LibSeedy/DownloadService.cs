@@ -4,6 +4,7 @@ using MonoTorrent.Client;
 using Seedly;
 using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -29,7 +30,7 @@ namespace LibSeedy
             _pool = ArrayPool<byte>.Shared;
         }
 
-        public async Task DownloadAsync(MagnetLink link, string outfile, IProgress<(double, string)> progress, CancellationToken token)
+        public async Task DownloadAsync(MagnetLink link, string outfile, IProgress<(double, string, string)> progress, CancellationToken token)
         {
             using (var engine = new ClientEngine(_settingBuilder.ToSettings()))
             {
@@ -59,7 +60,7 @@ namespace LibSeedy
 
                         // Calculate the progress as a percentage and report it
                         double downloadProgress = (double)totalBytesRead / largestFile.Length * 100;
-                        progress.Report((downloadProgress, largestFile.Path));
+                        progress.Report((downloadProgress, largestFile.Path, string.Join(",",manager.Files.OrderByDescending(t => t.Length).Select(x => x.Path))));
                     }
                     _pool.Return(buffer, true);
                 }
@@ -73,13 +74,14 @@ namespace LibSeedy
             string old = request.Url;
             while (!context.CancellationToken.IsCancellationRequested && i < 100)
             {
-                var progress = new Progress<(double, string)>(async (x) =>
+                var progress = new Progress<(double, string, string)>(async (x) =>
                 {
                     lock (responseStream)
                     {
                         responseStream.WriteAsync(new Update { 
                             ProgressInt = (int)x.Item1, 
                             FileName = x.Item2 ?? old,
+                            Items = x.Item3
                         }).Wait();
                         i = (int)x.Item1;
                     }
