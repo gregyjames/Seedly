@@ -64,25 +64,12 @@
                         </MudItem>
                     </MudStack>
                 </MudItem>
-                <MudItem xs="7">
+                <MudItem xs="8">
                     <MudProgressLinear Color="Color.Success" Striped="true" Size="Size.Large" Value="@item.progress_value" Min="0" Max="100">
-                    <MudText Typo="Typo.subtitle1" Color="Color.Dark">
-                        <b>@item.progress_value.ToString()%</b>
-                    </MudText>
-                      
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark">
+                            <b>@item.progress_value.ToString()%</b>
+                        </MudText>
                     </MudProgressLinear>
-                </MudItem>
-                <MudItem xs="1">
-                    <MudContainer MaxWidth="MaxWidth.Medium">
-                    @if(item.status == Status.Downloading)
-                    {
-                        <MudIcon Icon="@Icons.Material.Filled.Pause"></MudIcon>
-                    }
-                    else if(item.status == Status.Pause)
-                    {
-                        <MudIcon Icon="@Icons.Material.Filled.PlayArrow"></MudIcon>
-                    }
-                    </MudContainer>
                 </MudItem>
             }
         </MudGrid>
@@ -108,6 +95,7 @@
             public int progress_value { get; set; }
             public bool _disposed;
             public void Dispose() => _disposed = true;
+            public DateTime completion_date { get; set; }
             public Status status { get; set; }
             public List<string> files { get; set; }
             public DownloadItem(string url, Status stat)
@@ -166,6 +154,7 @@
                         await Task.Delay(1);
                     }
                     item.status = Status.Success;
+                    item.completion_date = DateTime.Now;
                 }
                 catch (RpcException ex) when (ex.Status.StatusCode == StatusCode.Cancelled)
                 {
