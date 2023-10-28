@@ -23,4 +23,8 @@
     <ProjectReference Include="..\LibSeedy\LibSeedy.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\res\" />
+  </ItemGroup>
+
 </Project>
