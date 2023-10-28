@@ -30,7 +30,38 @@ namespace LibSeedy
             _pool = ArrayPool<byte>.Shared;
         }
 
-        public async Task DownloadAsync(MagnetLink link, string outfile, IProgress<(double, string, string)> progress, CancellationToken token)
+        public override async Task<InfoResponse> GetTorrentInfo(InfoRequest request, ServerCallContext context)
+        {
+            var magnet = MagnetLink.TryParse(request.Url, out var magnetLink);
+            if (magnet)
+            {
+                var info = await GetInfo(magnetLink, context.CancellationToken);
+                return info;
+            }
+            else
+            {
+                return new InfoResponse
+                {
+                    Files = ""
+                };
+            }
+        }
+
+        private async Task<InfoResponse> GetInfo(MagnetLink link, CancellationToken token)
+        {
+            InfoResponse info = new InfoResponse();
+            using (var engine = new ClientEngine(_settingBuilder.ToSettings()))
+            {
+                var manager = await engine.AddStreamingAsync(link, "downloads");
+                await manager.StartAsync();
+                await manager.WaitForMetadataAsync(token);
+                info.Files = string.Join(",", manager.Files.OrderByDescending(t => t.Length).Select(x => x.Path));
+                await manager.StopAsync();
+            }
+            return info;
+        }
+
+        public async Task DownloadAsync(MagnetLink link, string outfile, IProgress<double> progress, CancellationToken token)
         {
             using (var engine = new ClientEngine(_settingBuilder.ToSettings()))
             {
@@ -60,7 +91,7 @@ namespace LibSeedy
 
                         // Calculate the progress as a percentage and report it
                         double downloadProgress = (double)totalBytesRead / largestFile.Length * 100;
-                        progress.Report((downloadProgress, largestFile.Path, string.Join(",",manager.Files.OrderByDescending(t => t.Length).Select(x => x.Path))));
+                        progress.Report(downloadProgress);
                     }
                     _pool.Return(buffer, true);
                 }
@@ -74,16 +105,14 @@ namespace LibSeedy
             string old = request.Url;
             while (!context.CancellationToken.IsCancellationRequested && i < 100)
             {
-                var progress = new Progress<(double, string, string)>(async (x) =>
+                var progress = new Progress<double>(async (x) =>
                 {
                     lock (responseStream)
                     {
                         responseStream.WriteAsync(new Update { 
-                            ProgressInt = (int)x.Item1, 
-                            FileName = x.Item2 ?? old,
-                            Items = x.Item3
+                            ProgressInt = (int)x
                         }).Wait();
-                        i = (int)x.Item1;
+                        i = (int)x;
                     }
                 });
 

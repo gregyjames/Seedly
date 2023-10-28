@@ -5,7 +5,9 @@ const int Port = 50051;
 
 Server server = new Server
 {
-    Services = { Seedly.Seedly.BindService(new DownloadService()) },
+    Services = { 
+        Seedly.Seedly.BindService(new DownloadService())
+    },
     Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
 };
 

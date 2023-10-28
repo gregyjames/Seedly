@@ -5,6 +5,7 @@ package Seedly;
 
 service Seedly {
   rpc GetUpdateStream (DownloadRequest) returns (stream Update);
+  rpc GetTorrentInfo (InfoRequest) returns (InfoResponse);
 }
 
 message DownloadRequest {
@@ -14,6 +15,12 @@ message DownloadRequest {
 
 message Update {
   int32 progressInt = 1;
-  string fileName = 2;
-  string Items = 3;
+}
+
+message InfoRequest{
+	string url = 1;
+}
+
+message InfoResponse{
+	string files = 1;
 }

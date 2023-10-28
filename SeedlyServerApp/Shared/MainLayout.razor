@@ -29,13 +29,13 @@
                         if (item.status == Status.Success)
                         {
                             <MudListItem Avatar="@Icons.Material.Filled.Check">
-                                @item.magnet_url
+                                @item.Name
                             </MudListItem>
                         }
                         else if (item.status == Status.Fail)
                         {
                             <MudListItem Avatar="@Icons.Material.Filled.Cancel">
-                                @item.magnet_url
+                                @item.Name
                             </MudListItem>
                         }
                     }
@@ -50,7 +50,7 @@
                 <MudItem xs="4" Style="overflow: hidden">
                     <MudStack>
                         <MudItem>
-                                <MudText Typo="Typo.button">@item.magnet_url</MudText>
+                                <MudText Typo="Typo.button">@item.Name</MudText>
                         </MudItem>
                         <MudItem>
                             <MudTreeView T="string">
@@ -91,15 +91,15 @@
         }
         public class DownloadItem
         {
+            public string Name { get; set; }
             public string magnet_url { get; set; }
             public int progress_value { get; set; }
-            public bool _disposed;
-            public void Dispose() => _disposed = true;
             public DateTime completion_date { get; set; }
             public Status status { get; set; }
             public List<string> files { get; set; }
             public DownloadItem(string url, Status stat)
             {
+                Name = "[Getting Torrent Info]";
                 magnet_url = url;
                 progress_value = 0;
                 status = stat;
@@ -111,9 +111,31 @@
             items.Add(new DownloadItem(Search, Status.Downloading));
             Search = string.Empty;
             StateHasChanged();
-            await SimulateProgress(cts.Token);
+            var tasks = new Task[]{
+                GetFileInfo(cts.Token),
+                SimulateProgress(cts.Token)
+            };
+            await Task.WhenAll(tasks);
         }
+        public async Task GetFileInfo(CancellationToken token)
+        {
+            await channel.ConnectAsync();
+            var client = new Seedly.Seedly.SeedlyClient(channel);
+            var item = items.Last();
+            var info_request = new Seedly.InfoRequest
+            {
+                Url = item.magnet_url
+            };
+            var call = client.GetTorrentInfo(info_request);
+            if (!string.IsNullOrEmpty(call.Files))
+            {
+                var files = call.Files.Split(',').ToList();
+                item.files = files;
+                item.Name = files.FirstOrDefault();
+                StateHasChanged();
+            }
 
+        }
         public async Task SimulateProgress(CancellationToken cancellationToken)
         {
             await channel.ConnectAsync();
@@ -123,9 +145,10 @@
             item.progress_value = 0;
             item.status = Status.Downloading;
 
+            //TODO: Check if magnet URL valid
+            
             Uri uri = new Uri(item.magnet_url);
             string fileName = System.IO.Path.GetFileName(uri.LocalPath);
-
             // Prepare the request
             var request = new Seedly.DownloadRequest
             { 
@@ -142,14 +165,6 @@
                     {
                         //Console.WriteLine("Received number: " + response.ProgressInt);
                         item.progress_value = response.ProgressInt;
-                        if (!string.IsNullOrEmpty(response.FileName))
-                        {
-                            item.magnet_url = response.FileName;
-                        }
-                        if (!string.IsNullOrEmpty(response.Items))
-                        {
-                            item.files = response.Items.Split(',').ToList();
-                        }
                         StateHasChanged();
                         await Task.Delay(1);
                     }
