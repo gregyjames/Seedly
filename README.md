@@ -1,18 +1,18 @@
 ![alt text](https://github.com/gregyjames/Seedly/blob/main/res/SEEDLY.png)
 
-### What is seedly?
+### What Is Seedly?
 
-Seedly is a self hosted seed box meaning that you can deploy it and use it to download torrents remotly. It consists of two main projects: SeedlyServer and SeedlyServerApp. 
+Seedly is a self-hosted seed box, meaning that you can deploy it and use it to download torrents remotely. It consists of two main projects: SeedlyServer and SeedlyServerApp.
 
-### Project overview
+### Project Overview
 
 #### Seedly Server
-The backend for our application, handles the actual downloading of torrents using MonoTorrent and is connected to the GUI via GRPC streaming endpoint that recieves a request with the magnet link of a file, and returns torrent metadata and download progress back to our interface.
+The backend for our application, it handles the actual downloading of torrents using MonoTorrent and is connected to the GUI via GRPC streaming endpoint that recieves a request with the magnet link of a file, and returns torrent metadata and download progress back to our interface.
 
 #### Seedly Server App
-The frontend for our application. Contatins the major GUI for our application.
+The frontend for our application, which contains the major GUI for the application.
 
-### Technologies used
+### Technologies Used
 1. Blazor 
 2. MudBlazor
 3. GRPC
