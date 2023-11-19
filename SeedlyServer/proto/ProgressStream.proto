@@ -1,16 +1,16 @@
 syntax = "proto3";
 
-option csharp_namespace = "Seedly";
 package main;
 
+option go_package = "./seedlyserver";
+
 service Seedly {
-  rpc GetUpdateStream (DownloadRequest) returns (stream Update);
+  rpc GetUpdateStream (DownloadRequest) returns (stream Update) {}
   rpc GetTorrentInfo (InfoRequest) returns (InfoResponse);
 }
 
 message DownloadRequest {
   string url = 1;
-  string outfile = 2;
 }
 
 message Update {
@@ -23,5 +23,5 @@ message InfoRequest{
 
 message InfoResponse{
 	string files = 1;
-	string name = 2;
+  string name = 2;
 }

@@ -1,18 +1,18 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
-WORKDIR /app
+# Use an official Golang runtime as a parent image
+FROM golang:latest
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src
-COPY ["SeedlyServer/SeedlyServer.csproj", "SeedlyServer/"]
-RUN dotnet restore "SeedlyServer/SeedlyServer.csproj"
+# Set the working directory to /go/src/app
+WORKDIR /go/src/app
+
+# Copy the current directory contents into the container at /go/src/app
 COPY . .
-WORKDIR "/src/SeedlyServer"
-RUN dotnet build "SeedlyServer.csproj" -c Release -o /app/build
 
-FROM build AS publish
-RUN dotnet publish "SeedlyServer.csproj" -c Release -o /app/publish
+# Build the Go app
+RUN go get -d -v ./...
+RUN go install -v ./...
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "SeedlyServer.dll"]
+# Expose port 50005
+EXPOSE 50005
+
+# Command to run your application
+CMD ["seedlyserver"]

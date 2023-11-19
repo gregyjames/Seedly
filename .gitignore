@@ -17,3 +17,13 @@ SeedlyServerApp/bin/Debug/net7.0/
 SeedlyServerApp/obj/
 
 LibSeedy/obj/
+
+SeedlyServer/.torrent.bolt.db
+
+SeedlyServerApp/bin/Release/net7.0/win-x86/
+
+SeedlyServerApp/bin/Release/net7.0/
+
+*.exe
+
+*.pdf
