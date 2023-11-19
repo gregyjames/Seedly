@@ -1,3 +1,4 @@
+[![Main Build](https://github.com/gregyjames/Seedly/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/gregyjames/Seedly/actions/workflows/main.yml)
 ![alt text](https://github.com/gregyjames/Seedly/blob/main/res/SEEDLY.png)
 
 ### What Is Seedly?
