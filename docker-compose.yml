@@ -26,4 +26,8 @@ services:
       - "50005:50005"
     volumes:
       - storage_volume:/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
 
