@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net"
+	"os"
 	pb_ref "seedlyserver/proto"
 	"time"
 
@@ -19,8 +20,19 @@ type server struct {
 
 // GetUpdateStream is the implementation of the GetUpdateStream RPC
 func (s server) GetUpdateStream(req *pb_ref.DownloadRequest, stream pb_ref.Seedly_GetUpdateStreamServer) error {
+	downloadPath := "/data"
+
+	err := os.MkdirAll(downloadPath, 0755)
+	if err != nil {
+		log.Fatalf("failed to create download path: %v", err)
+	}
+
+	config := torrent.NewDefaultClientConfig()
+	config.DataDir = downloadPath
+	config.NoUpload = true
+
 	log.Println("New download request recieved...")
-	c, _ := torrent.NewClient(nil)
+	c, _ := torrent.NewClient(config)
 	defer c.Close()
 	t, _ := c.AddMagnet(req.Url)
 	<-t.GotInfo()

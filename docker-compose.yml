@@ -1,5 +1,12 @@
 version: '3.4'
 
+volumes:
+  storage_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/
+      o: bind
 services:
   seedlyserverapp:
     image: ${DOCKER_REGISTRY-}seedlyserverapp
@@ -7,7 +14,7 @@ services:
       context: .
       dockerfile: SeedlyGUI/SeedlyServerApp/Dockerfile
     ports:
-      - "80:80"
+      - "90:80"
     links:
       - "seedlyserver:server"
   seedlyserver:
@@ -17,4 +24,6 @@ services:
       dockerfile: SeedlyServer/Dockerfile
     ports:
       - "50005:50005"
+    volumes:
+      - storage_volume:/data
 
