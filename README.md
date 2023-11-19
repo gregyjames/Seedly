@@ -8,7 +8,7 @@ Seedly is a self-hosted seed box, meaning that you can deploy it and use it to d
 ### Project Overview
 
 #### Seedly Server
-The backend for our application, it handles the actual downloading of torrents using MonoTorrent and is connected to the GUI via GRPC streaming endpoint that recieves a request with the magnet link of a file, and returns torrent metadata and download progress back to our interface.
+The backend for our application, it handles the actual downloading of torrents using [Anacrolix's Torrent Library](https://github.com/anacrolix/torrent) and is connected to the GUI via GRPC streaming endpoint that recieves a request with the magnet link of a file, and returns torrent metadata and download progress back to our interface.
 
 #### Seedly Server App
 The frontend for our application, which contains the major GUI for the application.
@@ -18,6 +18,12 @@ The frontend for our application, which contains the major GUI for the applicati
 2. MudBlazor
 3. GRPC
 4. ASP.NET Core
+5. Go
+
+### Running
+```
+docker compose up -d
+```
 
 ### License
 MIT License
