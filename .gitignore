@@ -27,3 +27,23 @@ SeedlyServerApp/bin/Release/net7.0/
 *.exe
 
 *.pdf
+
+SeedlyGUI/LibSeedy/bin/Debug/netstandard2.0/
+
+SeedlyGUI/LibSeedy/bin/Release/netstandard2.0/
+
+SeedlyGUI/LibSeedy/obj/Debug/netstandard2.0/
+
+SeedlyGUI/SeedlyServerApp/obj/Release/net7.0/
+
+SeedlyGUI/SeedlyServerApp/obj/
+
+SeedlyGUI/obj/Docker/
+
+SeedlyGUI/SeedlyServerApp/bin/Debug/net7.0/
+
+SeedlyGUI/LibSeedy/obj/Release/netstandard2.0/
+
+SeedlyGUI/LibSeedy/obj/
+
+SeedlyGUI/SeedlyServerApp/bin/Release/net7.0/

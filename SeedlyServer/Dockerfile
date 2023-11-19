@@ -1,18 +1,26 @@
 # Use an official Golang runtime as a parent image
 FROM golang:latest
 
-# Set the working directory to /go/src/app
-WORKDIR /go/src/app
+# create a working directory inside the image
+WORKDIR /app
 
-# Copy the current directory contents into the container at /go/src/app
-COPY . .
+# copy Go modules and dependencies to image
+COPY SeedlyServer/go.mod ./
 
-# Build the Go app
-RUN go get -d -v ./...
-RUN go install -v ./...
+# download Go modules and dependencies
+RUN go mod download
 
-# Expose port 50005
+# copy directory files i.e all files ending with .go
+COPY SeedlyServer/proto/*.go ./proto/
+COPY SeedlyServer/main.go ./
+RUN go get seedlyserver
+
+# compile application
+RUN go build
+
+# tells Docker that the container listens on specified network ports at runtime
 EXPOSE 50005
 
+# command to be used to execute when the image is used to start a container
 # Command to run your application
-CMD ["seedlyserver"]
+CMD ["./seedlyserver"]

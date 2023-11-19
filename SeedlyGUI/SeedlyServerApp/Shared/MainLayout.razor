@@ -81,7 +81,7 @@
         public string Search { get; set;}
         public List<DownloadItem> items = new List<DownloadItem>();
         public List<DownloadItem> CompletedItems = new List<DownloadItem>();
-        public GrpcChannel channel = GrpcChannel.ForAddress("http://localhost:50005");
+        public GrpcChannel channel = GrpcChannel.ForAddress("http://seedlyserver:50005");
         public CancellationTokenSource cts = new CancellationTokenSource((int)TimeSpan.FromDays(1).TotalMilliseconds);
         public enum Status
         {

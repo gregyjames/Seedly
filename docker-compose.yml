@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  seedlyserverapp:
+    image: ${DOCKER_REGISTRY-}seedlyserverapp
+    build:
+      context: .
+      dockerfile: SeedlyGUI/SeedlyServerApp/Dockerfile
+    ports:
+      - "80:80"
+    links:
+      - "seedlyserver:server"
+  seedlyserver:
+    image: ${DOCKER_REGISTRY-}seedlyserver
+    build:
+      context: .
+      dockerfile: SeedlyServer/Dockerfile
+    ports:
+      - "50005:50005"
+
